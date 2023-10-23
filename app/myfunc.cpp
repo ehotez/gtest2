@@ -1,20 +1,24 @@
 #include <iostream>
 #include <vector>
 #include <ctime>
-using namespace std;
+
+//using namespace std;
 
 class Book {
-protected:
-    string title;
-    string author;
-    string publisher;
+
+private:
+    std::string title;
+    std::string author;
+    std::string publisher;
     int year;
     bool reserved = false;
     time_t reserveDay;
     time_t returnDay;
 
-    int calculate_fine(){
-        time_t difference = difftime(returnDay, reserveDay);
+protected:
+
+    int calculate_fine() const{
+        time_t difference = int(difftime(returnDay, reserveDay));
         int daysDiff = difference / 86400;
         int fine = 0;
         if (daysDiff > 14){
@@ -24,11 +28,8 @@ protected:
     }
 
 public:
-    Book(string title, string author, string publisher, int year) {
-        this->title = title;
-        this->author = author;
-        this->publisher = publisher;
-        this->year = year;
+    Book(std::string title, std::string author, std::string publisher, int year)
+        : title(title), author(author), publisher(publisher), year(year) {
     }
 
     void reserve_B(time_t date){
@@ -37,43 +38,44 @@ public:
     }
 
     int return_B(){
-        this->returnDay = time(0);
+        this->returnDay = time(nullptr);
         this->reserved = false;
         return calculate_fine();
     }
 
-    string get_title() {
+    std::string get_title() const{
         return title;
     }
 
-    string get_author() {
+    std::string get_author() const{
         return author;
     }
 
-    int get_year() {
+    int get_year() const{
         return year;
     }
 
-    bool is_reserved(){
+    bool is_reserved() const{
         return reserved;
     }
 
     virtual void print() {
-        cout << "Title: " << title << endl;
-        cout << "Author: " << author << endl;
-        cout << "Publisher: " << publisher << endl;
-        cout << "Year: " << year << endl;
+        std::cout << "Title: " << title << std::endl;
+        std::cout << "Author: " << author << std::endl;
+        std::cout << "Publisher: " << publisher << std::endl;
+        std::cout << "Year: " << year << std::endl;
     }
 };
 
 class Library {
-protected:
-    vector<Book*> books;
+private:
+    std::vector<Book*> books;
 
-    Book* find_book_by_title(string title){
-        for (int i = 0; i < int(books.size()); i++) {
-            if (books[i]->get_title() == title) {
-                return books[i];
+protected:
+    Book* find_book_by_title(std::string title){
+        for(Book* book: books) {
+            if (book->get_title() == title) {
+                return book;
             }
         }
         return nullptr;
@@ -84,67 +86,69 @@ public:
         books.push_back(book);
     }
 
-    vector<Book*> find_books_by_author(string author){
-        vector<Book*> result;
-        for (int i = 0; i < int(books.size()); i++) {
-            if (books[i]->get_author() == author) {
-                result.push_back(books[i]);
+    std::vector<Book*> find_books_by_author(std::string author){
+        std::vector<Book*> result;
+        for(Book* book: books) {
+            if (book->get_author() == author) {
+                result.push_back(book);
             }
         }
         return result;
     }
 
-    void reserve_book (string title, time_t date){
+    void reserve_book (std::string title, time_t date){
         Book* foundBook = find_book_by_title(title);
 
         if(foundBook == nullptr){
-            cout << "There is no books like this" << endl;
+           std::cout << "There is no books like this" << std::endl;
         }
         else if(foundBook->is_reserved()){
-            cout << "Book already reserved" << endl;
+            std::cout << "Book already reserved" << std::endl;
         }
         else{
             foundBook->reserve_B(date);
         }
     }
 
-    void return_book (string title){
+    void return_book (std::string title){
         Book* foundBook = find_book_by_title(title);
         if(foundBook == nullptr){
-            cout << "There is no book like this reserved" << endl;
+            std::cout << "There is no book like this reserved" << std::endl;
         }else{
             int fine = foundBook->return_B();
             if (fine == 0){
-                cout << "No need to pay fine" << endl;
+                std::cout << "No need to pay fine" << std::endl;
             }
             else{
-                cout << "You have to pay " << fine << " rubles" << endl;
+                std::cout << "You have to pay " << fine << " rubles" << std::endl;
             }
         }
     }
 
-    void remove_book_by_title(string title) {
-        for (int i = 0; i < int(books.size()); i++) {
-            if (books[i]->get_title() == title) {
-                books.erase(books.begin() + i);
+    void remove_book_by_title(std::string title) {
+        for (auto it = books.begin(); it != books.end(); ) {
+            if ((*it)->get_title() == title) {
+                it = books.erase(it);
+            } else {
+                ++it;
             }
         }
     }
 
-    vector<Book*> reserved_books(){
-        vector<Book*> result;
-        for(int i = 0; i < int(books.size()); i++){
-            if(books[i]->is_reserved() == true){
-                result.push_back(books[i]);
+    std::vector<Book*> reserved_books(){
+        std::vector<Book*> result;
+        for(Book* book: books){
+            if(book->is_reserved() == true){
+                result.push_back(book);
             }
         }
         return result;
     }
 
     void print_books() {
-        for (int i = 0; i < int(books.size()); i++) {
-            books[i]->print();
-            cout << endl;
+        for(Book* book: books) {
+            book->print();
+            std::cout << std::endl;
         }
     }
 };

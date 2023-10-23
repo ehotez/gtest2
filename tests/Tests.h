@@ -12,7 +12,7 @@ extern "C" {
 
 TEST(BookTest, BookCanBeReserved) {
     Book book("Title", "Author", "Publisher", 2023);
-    time_t reserveDate = time(0);
+    time_t reserveDate = time(nullptr);
 
     book.reserve_B(reserveDate); // Книга зарезервированна
 
@@ -21,7 +21,7 @@ TEST(BookTest, BookCanBeReserved) {
 
 TEST(BookTest, BookReturnedWithFine) {
     Book book("Title", "Author", "Publisher", 2023);
-    time_t reserveDate = time(0) - (15 * 86400); // 15 дней
+    time_t reserveDate = time(nullptr) - (15 * 86400); // 15 дней
 
     book.reserve_B(reserveDate);
     book.return_B();
@@ -32,7 +32,7 @@ TEST(BookTest, BookReturnedWithFine) {
 
 TEST(BookTest, BookReturnedInTime) {
     Book book("Title", "Author", "Publisher", 2023);
-    time_t reserveDate = time(0) - (10 * 86400); // 10 дней
+    time_t reserveDate = time(nullptr) - (10 * 86400); // 10 дней
 
     book.reserve_B(reserveDate);
     book.return_B();
@@ -54,7 +54,7 @@ TEST(BookTest, Print) {
     Book book("Title1", "Author1", "Publisher1", 1978);
     testing::internal::CaptureStdout();
     book.print();
-    string output = testing::internal::GetCapturedStdout();
+    std::string output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, "Title: Title1\nAuthor: Author1\nPublisher: Publisher1\nYear: 1978\n");
 }
 
@@ -72,7 +72,7 @@ TEST(LibraryTest, LibraryCanAddAndFindBooks) {
 TEST(LibraryTest, LibraryCanReserveAndReturnBooks) {
     Library library;
     Book book("Title", "Author", "Publisher", 2023);
-    time_t reserveDate = time(0) - 1;
+    time_t reserveDate = time(nullptr) - 1;
 
     library.add_book(&book);
     library.reserve_book("Title", reserveDate);
@@ -97,7 +97,7 @@ TEST(LibraryTest, ReservedBooksInLibrary) {
     Book book1("Title1", "Author1", "Publisher1", 2023);
     Book book2("Title2", "Author2", "Publisher2", 2023);
     library.add_book(&book1);
-    time_t date = time(0);
+    time_t date = time(nullptr);
     library.reserve_book("Title1", date);
     ASSERT_EQ(library.reserved_books().size(), 1);
 }
