@@ -3,7 +3,52 @@
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=ehotez_gtest2&metric=alert_status)](https://sonarcloud.io/dashboard?id=ehotez_gtest2)
 [![Code smells](https://sonarcloud.io/api/project_badges/measure?project=ehotez_gtest2&metric=code_smells)](https://sonarcloud.io/dashboard?id=ehotez_gtest2)
 
-# План тестирования
+# Класс Book
+
+Класс `Book` представляет собой объект книги в библиотеке.
+
+### Свойства
+
+- `title` (string): Заголовок книги.
+- `author` (string): Автор книги.
+- `publisher` (string): Издательство книги.
+- `year` (int): Год издания книги.
+- `reserved` (bool): Флаг, указывающий, забронирована ли книга.
+- `reserveDay` (time_t): Дата бронирования книги.
+- `returnDay` (time_t): Дата возврата книги.
+
+### Методы
+
+- `Book(string title, string author, string publisher, int year)`: Конструктор класса `Book`. Создает новый экземпляр книги с указанными свойствами.
+- `void reserve_B(time_t date)`: Метод для бронирования книги на указанную дату.
+- `int return_B()`: Метод для возврата книги.
+- `int calculate_fine()`: Метод для подсчета штрафа просроченности.
+- `string get_title()`: Метод для получения заголовка книги.
+- `string get_author()`: Метод для получения имени автора книги.
+- `int get_year()`: Метод для получения года издания книги.
+- `bool is_reserved()`: Метод для проверки, забронирована ли книга.
+- `void print()`: Метод для вывода информации о книге.
+
+# Класс Library
+
+Класс `Library` представляет собой библиотеку с коллекцией книг.
+
+### Свойства
+
+- `books` (vector<Book*>): Вектор, содержащий экземпляры книг.
+
+### Методы
+
+- `void add_book(Book* book)`: Метод для добавления книги в библиотеку.
+- `vector<Book*> find_books_by_author(string author)`: Метод для поиска книг по имени автора.
+- `void reserve_book(string title, time_t date)`: Метод для бронирования книги по заголовку.
+- `void return_book(string title)`: Метод для возврата книги и расчета штрафа, если он есть.
+- `Book* find_book_by_title(string title)`: Метод для поиска книги по заголовку.
+- `void remove_book_by_title(string title)`: Метод для удаления книги по заголовку.
+- `void print_books()`: Метод для вывода списка книг в библиотеке.
+
+
+
 
 
 
