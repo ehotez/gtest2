@@ -144,7 +144,7 @@ public:
     }
 
     void print_books() const{
-        for(Book* book: books) {
+        for(const Book* book: books) {
             book->print_book();
             std::cout << std::endl;
         }
