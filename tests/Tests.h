@@ -53,7 +53,7 @@ TEST(BookTest, GettersTest) {
 TEST(BookTest, Print) {
     Book book("Title1", "Author1", "Publisher1", 1978);
     testing::internal::CaptureStdout();
-    book.print();
+    book.print_book();
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, "Title: Title1\nAuthor: Author1\nPublisher: Publisher1\nYear: 1978\n");
 }
