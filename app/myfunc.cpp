@@ -2,8 +2,6 @@
 #include <vector>
 #include <ctime>
 
-//using namespace std;
-
 class Book {
 
 private:
@@ -19,7 +17,7 @@ protected:
 
     int calculate_fine() const{
         time_t difference = int(difftime(returnDay, reserveDay));
-        int daysDiff = difference / 86400;
+        int daysDiff = int(difference / 86400);
         int fine = 0;
         if (daysDiff > 14){
             fine = (daysDiff - 14) * 5;
@@ -28,7 +26,7 @@ protected:
     }
 
 public:
-    Book(std::string title, std::string author, std::string publisher, int year)
+    Book(const std::string& title, const std::string& author, const std::string& publisher, int year)
         : title(title), author(author), publisher(publisher), year(year) {
     }
 
@@ -59,7 +57,7 @@ public:
         return reserved;
     }
 
-    virtual void print() {
+    void print_book() {
         std::cout << "Title: " << title << std::endl;
         std::cout << "Author: " << author << std::endl;
         std::cout << "Publisher: " << publisher << std::endl;
@@ -72,7 +70,7 @@ private:
     std::vector<Book*> books;
 
 protected:
-    Book* find_book_by_title(std::string title){
+    Book* find_book_by_title(const std::string& title){
         for(Book* book: books) {
             if (book->get_title() == title) {
                 return book;
@@ -86,7 +84,7 @@ public:
         books.push_back(book);
     }
 
-    std::vector<Book*> find_books_by_author(std::string author){
+    std::vector<Book*> find_books_by_author(const std::string& author){
         std::vector<Book*> result;
         for(Book* book: books) {
             if (book->get_author() == author) {
@@ -96,7 +94,7 @@ public:
         return result;
     }
 
-    void reserve_book (std::string title, time_t date){
+    void reserve_book (const std::string& title, time_t date){
         Book* foundBook = find_book_by_title(title);
 
         if(foundBook == nullptr){
@@ -110,7 +108,7 @@ public:
         }
     }
 
-    void return_book (std::string title){
+    void return_book (const std::string& title){
         Book* foundBook = find_book_by_title(title);
         if(foundBook == nullptr){
             std::cout << "There is no book like this reserved" << std::endl;
@@ -125,7 +123,7 @@ public:
         }
     }
 
-    void remove_book_by_title(std::string title) {
+    void remove_book_by_title(const std::string& title) {
         for (auto it = books.begin(); it != books.end(); ) {
             if ((*it)->get_title() == title) {
                 it = books.erase(it);
@@ -135,7 +133,7 @@ public:
         }
     }
 
-    std::vector<Book*> reserved_books(){
+    std::vector<Book*> reserved_books() const{
         std::vector<Book*> result;
         for(Book* book: books){
             if(book->is_reserved() == true){
@@ -145,9 +143,9 @@ public:
         return result;
     }
 
-    void print_books() {
+    void print_books() const{
         for(Book* book: books) {
-            book->print();
+            book->print_book();
             std::cout << std::endl;
         }
     }
