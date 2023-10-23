@@ -17,7 +17,7 @@ protected:
 
     int calculate_fine() const{
         time_t difference = int(difftime(returnDay, reserveDay));
-        int daysDiff = int(difference / 86400);
+        auto daysDiff = int(difference / 86400);
         int fine = 0;
         if (daysDiff > 14){
             fine = (daysDiff - 14) * 5;
@@ -57,7 +57,7 @@ public:
         return reserved;
     }
 
-    void print_book() {
+    void print_book() const{
         std::cout << "Title: " << title << std::endl;
         std::cout << "Author: " << author << std::endl;
         std::cout << "Publisher: " << publisher << std::endl;
@@ -70,7 +70,7 @@ private:
     std::vector<Book*> books;
 
 protected:
-    Book* find_book_by_title(const std::string& title){
+    Book* find_book_by_title(const std::string_view& title){
         for(Book* book: books) {
             if (book->get_title() == title) {
                 return book;
@@ -84,7 +84,7 @@ public:
         books.push_back(book);
     }
 
-    std::vector<Book*> find_books_by_author(const std::string& author){
+    std::vector<Book*> find_books_by_author(const std::string_view& author) const{
         std::vector<Book*> result;
         for(Book* book: books) {
             if (book->get_author() == author) {
@@ -123,7 +123,7 @@ public:
         }
     }
 
-    void remove_book_by_title(const std::string& title) {
+    void remove_book_by_title(const std::string_view& title) {
         for (auto it = books.begin(); it != books.end(); ) {
             if ((*it)->get_title() == title) {
                 it = books.erase(it);
