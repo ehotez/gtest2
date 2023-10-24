@@ -14,9 +14,7 @@ extern "C" {
 TEST(BookTest, BookCanBeReserved) {
     Book book("Title", "Author", "Publisher", 2023);
     time_t reserveDate = time(nullptr);
-
     book.reserve_B(reserveDate); // Книга зарезервированна
-
     ASSERT_TRUE(book.is_reserved());
 }
 
@@ -24,10 +22,8 @@ TEST(BookTest, BookCanBeReserved) {
 TEST(BookTest, BookReturnedWithFine) {
     Book book("Title", "Author", "Publisher", 2023);
     time_t reserveDate = time(nullptr) - (15 * 86400); // 15 дней
-
     book.reserve_B(reserveDate);
     book.return_B();
-
     ASSERT_FALSE(book.is_reserved()); // Книга возвращена с просроком в 1 день
     ASSERT_EQ(book.return_B(), 5);  // Штраф 5 рублей
 }
@@ -36,10 +32,8 @@ TEST(BookTest, BookReturnedWithFine) {
 TEST(BookTest, BookReturnedInTime) {
     Book book("Title", "Author", "Publisher", 2023);
     time_t reserveDate = time(nullptr) - (10 * 86400); // 10 дней
-
     book.reserve_B(reserveDate);
     book.return_B();
-
     ASSERT_FALSE(book.is_reserved()); // Книга возвращена во время
     ASSERT_EQ(book.return_B(), 0);  // Штраф 0
 }
@@ -47,7 +41,6 @@ TEST(BookTest, BookReturnedInTime) {
 //Тестирование всех get методов
 TEST(BookTest, GettersTest) {
     Book book("Title", "Author", "Publisher", 2023);
-
     ASSERT_EQ(book.get_title(), "Title");
     ASSERT_EQ(book.get_author(), "Author");
     ASSERT_EQ(book.get_year(), 2023);
@@ -75,21 +68,55 @@ TEST(LibraryTest, LibraryCanAddAndFindBooks) {
     ASSERT_EQ(library.find_books_by_author("Author2")[0]->get_author(), "Author2");
 }
 
-//В библиотеке можно забронировать или вернуть книгу
-TEST(LibraryTest, LibraryCanReserveAndReturnBooks) {
+//В библиотеке можно забронировать книгу
+TEST(LibraryTest, LibraryCanReserveBooks) {
     Library library;
     Book book("Title", "Author", "Publisher", 2023);
     time_t reserveDate = time(nullptr) - 1;
-
     library.add_book(&book);
     library.reserve_book("Title", reserveDate);
-
     ASSERT_TRUE(book.is_reserved());
 
-    library.return_book("Title");
+}
 
+//В библиотеке можно вернуть книгу
+TEST(LibraryTest, LibraryCanReturnBooks) {
+    Library library;
+    Book book("Title", "Author", "Publisher", 2023);
+    time_t reserveDate = time(nullptr) - 1;
+    library.add_book(&book);
+    library.reserve_book("Title", reserveDate);
+    ASSERT_TRUE(book.is_reserved());
+    library.return_book("Title");
     ASSERT_FALSE(book.is_reserved());
 }
+
+//В библиотеке нельзя вернуть книгу не из этой библиотеки
+TEST(LibraryTest, LibraryCannotReturnUnknownBook) {
+    Library library;
+    Book book("Title", "Author", "Publisher", 2023);
+    time_t reserveDate = time(nullptr) - 1;
+    library.add_book(&book);
+    testing::internal::CaptureStdout();
+    library.reserve_book("Title1", reserveDate);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "Unknown book\n");
+
+}
+
+//В библиотеке нельзя забронировать уже забронированную книгу
+TEST(LibraryTest, LibraryCannotTakeReservedBook) {
+    Library library;
+    Book book("Title", "Author", "Publisher", 2023);
+    time_t reserveDate = time(nullptr) - 1;
+    library.add_book(&book);
+    testing::internal::CaptureStdout();
+    library.reserve_book("Title", reserveDate);
+    library.reserve_book("Title", reserveDate);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "Book already reserved\n");
+}
+
 
 //Из библиотеки можно удалить книгу
 TEST(LibraryTest, RemoveFromLibrary) {
@@ -123,7 +150,7 @@ TEST(LibraryTest, SimilarBooksByOneWord) {
     std::string search_title = "Mockingbird";
     std::vector<Book*> books = library.similar_books(search_title);
     testing::internal::CaptureStdout();
-    for(Book* book: books){
+    for(const Book* book: books){
         std::cout << book->get_title() << std::endl;
     }
     std::string output = testing::internal::GetCapturedStdout();
@@ -144,7 +171,7 @@ TEST(LibraryTest, SimilarBooksByWords) {
     std::string search_title = "Mockingbird great rye";
     std::vector<Book*> books = library.similar_books(search_title);
     testing::internal::CaptureStdout();
-    for(Book* book: books){
+    for(const Book* book: books){
         std::cout << book->get_title() << std::endl;
     }
     std::string output = testing::internal::GetCapturedStdout();
@@ -164,7 +191,7 @@ TEST(LibraryTest, SimilarBooksUpperCase) {
     std::string search_title = "GaTSbY";
     std::vector<Book*> books = library.similar_books(search_title);
     testing::internal::CaptureStdout();
-    for(Book* book: books){
+    for(const Book* book: books){
         std::cout << book->get_title() << std::endl;
     }
     std::string output = testing::internal::GetCapturedStdout();

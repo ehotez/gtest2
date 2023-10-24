@@ -100,7 +100,7 @@ public:
         Book* foundBook = find_book_by_title(title);
 
         if(foundBook == nullptr){
-           std::cout << "There is no books like this" << std::endl;
+           std::cout << "Unknown book" << std::endl;
         }
         else if(foundBook->is_reserved()){
             std::cout << "Book already reserved" << std::endl;
@@ -160,12 +160,12 @@ public:
 
         while(iss >> word){
             for(char& c: word){
-                c = std::tolower(c);
+                c = char(std::tolower(c));
             }
             for(Book* book: books){
                 std::string title = book->get_title();
                 for(char& c: title){
-                    c = std::tolower(c);
+                    c = char(std::tolower(c));
                 }
                 if(title.find(word) != std::string::npos){
                         result.push_back(book);
