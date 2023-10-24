@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <ctime>
+#include <sstream>
+#include <set>
 
 class Book {
 
@@ -148,5 +150,30 @@ public:
             book->print_book();
             std::cout << std::endl;
         }
+    }
+
+    //Поиск в библиотеке похожей книги по названию
+    std::vector<Book*> similar_books(const std::string& key_words) const{
+        std::vector<Book*> result;
+        std::istringstream iss(key_words);
+        std::string word;
+
+        while(iss >> word){
+            for(char& c: word){
+                c = std::tolower(c);
+            }
+            for(Book* book: books){
+                std::string title = book->get_title();
+                for(char& c: title){
+                    c = std::tolower(c);
+                }
+                if(title.find(word) != std::string::npos){
+                        result.push_back(book);
+                }
+            }
+        }
+        std::set<Book*> uniqueSet(result.begin(), result.end());
+        result.assign(uniqueSet.begin(), uniqueSet.end());
+        return result;
     }
 };

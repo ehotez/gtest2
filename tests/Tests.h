@@ -10,6 +10,7 @@ extern "C" {
 #include "myfunc.cpp"
 }
 
+//Книга забронирована
 TEST(BookTest, BookCanBeReserved) {
     Book book("Title", "Author", "Publisher", 2023);
     time_t reserveDate = time(nullptr);
@@ -19,6 +20,7 @@ TEST(BookTest, BookCanBeReserved) {
     ASSERT_TRUE(book.is_reserved());
 }
 
+//Книга возвращена с просроком
 TEST(BookTest, BookReturnedWithFine) {
     Book book("Title", "Author", "Publisher", 2023);
     time_t reserveDate = time(nullptr) - (15 * 86400); // 15 дней
@@ -30,6 +32,7 @@ TEST(BookTest, BookReturnedWithFine) {
     ASSERT_EQ(book.return_B(), 5);  // Штраф 5 рублей
 }
 
+//Книга возвращена вовремя
 TEST(BookTest, BookReturnedInTime) {
     Book book("Title", "Author", "Publisher", 2023);
     time_t reserveDate = time(nullptr) - (10 * 86400); // 10 дней
@@ -41,6 +44,7 @@ TEST(BookTest, BookReturnedInTime) {
     ASSERT_EQ(book.return_B(), 0);  // Штраф 0
 }
 
+//Тестирование всех get методов
 TEST(BookTest, GettersTest) {
     Book book("Title", "Author", "Publisher", 2023);
 
@@ -50,6 +54,7 @@ TEST(BookTest, GettersTest) {
     ASSERT_EQ(book.is_reserved(), false);
 }
 
+//Тестирование вывода информации о книге
 TEST(BookTest, Print) {
     Book book("Title1", "Author1", "Publisher1", 1978);
     testing::internal::CaptureStdout();
@@ -58,6 +63,7 @@ TEST(BookTest, Print) {
     EXPECT_EQ(output, "Title: Title1\nAuthor: Author1\nPublisher: Publisher1\nYear: 1978\n");
 }
 
+//В библиотеку можно добавить и найти книгу
 TEST(LibraryTest, LibraryCanAddAndFindBooks) {
     Library library;
     Book book1("Title1", "Author1", "Publisher1", 2022);
@@ -69,6 +75,7 @@ TEST(LibraryTest, LibraryCanAddAndFindBooks) {
     ASSERT_EQ(library.find_books_by_author("Author2")[0]->get_author(), "Author2");
 }
 
+//В библиотеке можно забронировать или вернуть книгу
 TEST(LibraryTest, LibraryCanReserveAndReturnBooks) {
     Library library;
     Book book("Title", "Author", "Publisher", 2023);
@@ -84,6 +91,7 @@ TEST(LibraryTest, LibraryCanReserveAndReturnBooks) {
     ASSERT_FALSE(book.is_reserved());
 }
 
+//Из библиотеки можно удалить книгу
 TEST(LibraryTest, RemoveFromLibrary) {
     Library library;
     Book book("Title", "Author", "Publisher", 2023);
@@ -92,6 +100,7 @@ TEST(LibraryTest, RemoveFromLibrary) {
     ASSERT_EQ(library.find_books_by_author("Author").size(), 0);
 }
 
+//В библиотеке можно посмотреть список забронированных книг
 TEST(LibraryTest, ReservedBooksInLibrary) {
     Library library;
     Book book1("Title1", "Author1", "Publisher1", 2023);
@@ -102,6 +111,64 @@ TEST(LibraryTest, ReservedBooksInLibrary) {
     ASSERT_EQ(library.reserved_books().size(), 1);
 }
 
+//Поиск похожих книг по одному слову
+TEST(LibraryTest, SimilarBooksByOneWord) {
+    Library library;
 
+    library.add_book(new Book("The Catcher in the Rye", "J.D. Salinger","Publisher", 1984));
+    library.add_book(new Book("To Kill a Mockingbird", "Harper Lee","Publisher", 1984));
+    library.add_book(new Book("The Great Gatsby", "F. Scott Fitzgerald","Publisher", 1984));
+    library.add_book(new Book("1984", "George Orwell","Publisher", 1984));
+
+    std::string search_title = "Mockingbird";
+    std::vector<Book*> books = library.similar_books(search_title);
+    testing::internal::CaptureStdout();
+    for(Book* book: books){
+        std::cout << book->get_title() << std::endl;
+    }
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "To Kill a Mockingbird\n");
+
+}
+
+//Поиск похожих книг по нескольким словам
+TEST(LibraryTest, SimilarBooksByWords) {
+
+    Library library;
+
+    library.add_book(new Book("The Catcher in the Rye", "J.D. Salinger","Publisher", 1984));
+    library.add_book(new Book("To Kill a Mockingbird", "Harper Lee","Publisher", 1984));
+    library.add_book(new Book("The Great Gatsby", "F. Scott Fitzgerald","Publisher", 1984));
+    library.add_book(new Book("1984", "George Orwell","Publisher", 1984));
+
+    std::string search_title = "Mockingbird great rye";
+    std::vector<Book*> books = library.similar_books(search_title);
+    testing::internal::CaptureStdout();
+    for(Book* book: books){
+        std::cout << book->get_title() << std::endl;
+    }
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "The Catcher in the Rye\nTo Kill a Mockingbird\nThe Great Gatsby\n");
+
+}
+
+//Поиск похожих книг в независимости от регистра букв
+TEST(LibraryTest, SimilarBooksUpperCase) {
+    Library library;
+
+    library.add_book(new Book("The Catcher in the Rye", "J.D. Salinger","Publisher", 1984));
+    library.add_book(new Book("To Kill a Mockingbird", "Harper Lee","Publisher", 1984));
+    library.add_book(new Book("The Great Gatsby", "F. Scott Fitzgerald","Publisher", 1984));
+    library.add_book(new Book("1984", "George Orwell","Publisher", 1984));
+
+    std::string search_title = "GaTSbY";
+    std::vector<Book*> books = library.similar_books(search_title);
+    testing::internal::CaptureStdout();
+    for(Book* book: books){
+        std::cout << book->get_title() << std::endl;
+    }
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "The Great Gatsby\n");
+}
 
 #endif // TESTS_H
