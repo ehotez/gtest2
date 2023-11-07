@@ -75,7 +75,8 @@ TEST(LibraryTest, LibraryCanFindBooksByAuthor) {
 
     library.add_book(&book1);
     library.add_book(&book2);
-    std::string title = library.find_books_by_author("Author2")[0]->get_title();
+    std::string author = "Author2";
+    std::string title = library.find_books_by_author(author)[0]->get_title();
     ASSERT_EQ(title, "Title2");
 }
 
@@ -164,7 +165,7 @@ TEST(LibraryTest, RemoveFromLibrary) {
 }
 
 //В библиотеке можно посмотреть список забронированных книг
-TEST(LibraryTest, ReservedBooksInLibrary) {
+TEST(LibraryTest, LibraryReservedBooks) {
     Library library;
     Book book1("Title1", "Author1", "Publisher1", 2023);
     Book book2("Title2", "Author2", "Publisher2", 2023);
@@ -174,7 +175,7 @@ TEST(LibraryTest, ReservedBooksInLibrary) {
     library.reserve_book(reserve_title, date);
     testing::internal::CaptureStdout();
     std::vector<Book*> books = library.reserved_books();
-    for(Book* book: books) {
+    for(const Book* book: books) {
         book->print_book();
     }
     std::string output = testing::internal::GetCapturedStdout();

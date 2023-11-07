@@ -126,9 +126,10 @@ library.books_amount() = 2 - количество книг в библиотек
 **Входные данные:**  
 library - 
 book1("Title1", "Author1", "Publisher1", 2022) - экземпляр книги  
-book2("Title2", "Author2", "Publisher2", 2023) - экземпляр книги  
+book2("Title2", "Author2", "Publisher2", 2023) - экземпляр книги 
+author = "Author2" - автор по которому происходит поиск в библиотеке 
 **Выходные данные:**  
-title = "Title2" -  при поиске по Author2 получаем данное значение
+title = "Title2" - название книги по автору  
 
 ### LibraryCanReserveBooks
 
@@ -199,13 +200,13 @@ book_to_remove = "Title" -  название книги для удаления
 **Выходные данные:**  
 library.books_amount() = 0 - количество книг в библиотеке становится равно 0  
 
-### ReservedBooksInLibrary
+### LibraryReservedBooks
 
 - **Описание:** Проверяет, что можно получить список зарезервированных книг в библиотеке.  
 **Входные данные:**  
 book1("Title1", "Author1", "Publisher1", 2023) - экземпляр книги  
 book2("Title2", "Author2", "Publisher2", 2023) - экземпляр книги  
-date = time(nullptr) - дата бронирования
+date = time(nullptr) - дата бронирования  
 reserve_title = "Title1" - название книги для бронирования
 **Выходные данные:**  
 Выводит сообщение в формате  
@@ -224,7 +225,7 @@ book("The Great Gatsby", "F. Scott Fitzgerald","Publisher", 1984) - 3 книга
 book("1984", "George Orwell","Publisher", 1984) - 4 книга  
 search_title = "Mockingbird" - фраза для поиска  
 **Выходные данные:** 
-Выводит название найденной книги "To Kill a Mockingbird\n"  
+Выводит название найденной книги "To Kill a Mockingbird"  
 
 ### SimilarBooksByWords
 

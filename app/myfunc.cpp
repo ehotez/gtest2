@@ -86,8 +86,8 @@ public:
         books.push_back(book);
     }
 
-    int books_amount(){
-        return books.size();
+    int books_amount() const{
+        return int(books.size());
     }
 
     std::vector<Book*> find_books_by_author(const std::string_view& author) const{
