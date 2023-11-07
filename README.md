@@ -57,6 +57,8 @@
 ### BookCanBeReserved
 
 - **Описание:** Проверяет, что книгу можно успешно зарезервировать.
+- Входные данные: book("Title", "Author", "Publisher", 2023);
+Выходные данные: book.is_reserved() = True
 
 ### BookReturnedWithFine
 
