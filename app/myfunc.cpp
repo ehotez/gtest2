@@ -86,6 +86,10 @@ public:
         books.push_back(book);
     }
 
+    int books_amount(){
+        return books.size();
+    }
+
     std::vector<Book*> find_books_by_author(const std::string_view& author) const{
         std::vector<Book*> result;
         for(Book* book: books) {
@@ -104,8 +108,7 @@ public:
         }
         else if(foundBook->is_reserved()){
             std::cout << "Book already reserved" << std::endl;
-        }
-        else{
+        }else{
             foundBook->reserve_B(date);
         }
     }
@@ -113,7 +116,9 @@ public:
     void return_book (const std::string& title){
         Book* foundBook = find_book_by_title(title);
         if(foundBook == nullptr){
-            std::cout << "There is no book like this reserved" << std::endl;
+            std::cout << "Unknown book" << std::endl;
+        }else if(!foundBook->is_reserved()){
+            std::cout << "Book is not reserved" << std::endl;
         }else{
             int fine = foundBook->return_B();
             if (fine == 0){

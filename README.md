@@ -40,6 +40,7 @@
 ### Методы
 
 - `void add_book(Book* book)`: Метод для добавления книги в библиотеку.
+- `int books_amount`: Метод для получения количества книг в библиотеке.
 - `vector<Book*> find_books_by_author(string author)`: Метод для поиска книг по имени автора.
 - `void reserve_book(string title, time_t date)`: Метод для бронирования книги по заголовку.
 - `void return_book(string title)`: Метод для возврата книги и расчета штрафа, если он есть.
@@ -66,71 +67,203 @@ book.is_reserved() = True - книга забронирована
 ### BookReturnedWithFine
 
 - **Описание:** Проверяет, что книга, возвращенная с просрочкой, влечет штраф.  
-Входные данные: book("Title", "Author", "Publisher", 2023), reserveDate = time(nullptr)  
-Выходные данные: book.is_reserved() = False (книга не забронирована), book.return_B() = 5 (пени равны 5)
+**Входные данные:**  
+book("Title", "Author", "Publisher", 2023) - экземпляр книги   
+reserveDate = time(nullptr) - (15 * 86400) - дата 15 дней назад  
+**Выходные данные:**  
+book.is_reserved() = False - книга не забронирована  
+book.return_B() = 5 - пени равны 5  
 
 ### BookReturnedInTime
 
 - **Описание:** Проверяет, что книга, возвращенная вовремя, не влечет штраф.  
-Входные данные: book("Title", "Author", "Publisher", 2023)  
-Выходные данные: book.is_reserved() = False, book_return_B() = 0
+**Входные данные:**  
+book("Title", "Author", "Publisher", 2023) - экземляр книги  
+reserveDate = time(nullptr) - (10 * 86400) - дата 10 дней назад  
+**Выходные данные:**  
+book.is_reserved() = False - книга не забронирована  
+book.return_B() = 0 - пени 0 рублей  
 
 ### GettersTest
 
 - **Описание:** Проверяет правильность работы методов получения информации о книге.  
-Входные данные: book("Title", "Author", "Publisher", 2023)  
-Выходные данные: 
+**Входные данные:**  
+book("Title", "Author", "Publisher", 2023) - экземляр книги  
+**Выходные данные:**  
+book.get_title() = "Title" - название книги  
+book.get_author() = "Author" - автор книги  
+book.get_year() = 2023 - год  
+book.is_reserved() = false - книга не забронирована  
 
 ### Print
 
-- **Описание:** Проверяет правильность вывода информации о книге.
+- **Описание:** Проверяет правильность вывода информации о книге.  
+**Входные данные:**  
+book("Title", "Author", "Publisher", 2023) - экземляр книги   
+**Выходные данные:**  
+Выводит данные в формате  
+"Title: Title1  
+Author: Author1  
+Publisher: Publisher1  
+Year: 1978"    
 
 ## Тесты для класса `Library`
 
-### LibraryCanAddAndFindBooks
+Для каждого теста создается экземпляр класса `Library`:  
+`Library library;` 
 
-- **Описание:** Проверяет возможность добавления книг в библиотеку и их поиска.
+### LibraryCanAddBooks
+
+- **Описание:** Проверяет возможность добавления книг в библиотеку.  
+**Входные данные:**  
+book1("Title1", "Author1", "Publisher1", 2022) - экземпляр книги  
+book2("Title2", "Author2", "Publisher2", 2023) - экземпляр книги  
+**Выходные данные:**  
+library.books_amount() = 2 - количество книг в библиотеке
+
+### LibraryCanFindBooksByAuthor
+- **Описание:** Проверяет возможность поиска книг по автору в библиотеке.  
+**Входные данные:**  
+library - 
+book1("Title1", "Author1", "Publisher1", 2022) - экземпляр книги  
+book2("Title2", "Author2", "Publisher2", 2023) - экземпляр книги  
+**Выходные данные:**  
+title = "Title2" -  при поиске по Author2 получаем данное значение
 
 ### LibraryCanReserveBooks
 
-- **Описание:** Проверяет возможность резервации книг в библиотеке.
+- **Описание:** Проверяет возможность резервации книг в библиотеке.  
+**Входные данные:**  
+library - 
+book("Title", "Author", "Publisher", 2023) - экземпляр книги  
+reserveDate = time(nullptr) - 1 - дата бронирования книги  
+**Выходные данные:**  
+book.is_reserved() = True - книга забронирована
+
+### LibraryCannotReserveUnknownBook
+
+- **Описание:** Проверяет, что нельзя зарезервировать книгу, которой нет в библиотеке.  
+**Входные данные:**  
+library - 
+book("Title", "Author", "Publisher", 2023) - экземпляр книги  
+reserveDate = time(nullptr) - 1 - дата бронирования  
+book_to_reserve = "Title1" - название книги для брони  
+**Выходные данные:**  
+Выводит сообщение "Unknown book"  
 
 ### LibraryCanReturnBooks
 
-- **Описание:** Проверяет возможность возврата книг в библиотеку.
+- **Описание:** Проверяет возможность возврата книг в библиотеку.  
+**Входные данные:**  
+library - 
+book("Title", "Author", "Publisher", 2023) - экземпляр книги  
+reserveDate = time(nullptr) - 1 - дата брони  
+**Выходные данные:**  
+book.is_reserved() = False - книга не забронирована  
 
 ### LibraryCannotReturnUnknownBook
 
-- **Описание:** Проверяет, что нельзя вернуть книгу, которой нет в библиотеке.
+- **Описание:** Проверяет, что нельзя вернуть книгу, которой нет в библиотеке.  
+**Входные данные:**  
+library - 
+book("Title", "Author", "Publisher", 2023) - экземпляр книги  
+book_to_return = "Title1" - название книги, которую пытаются вернуть    
+**Выходные данные:**  
+Выводит сообщение "Unknown book"
+
+### LibraryCannotReturnNotReservedBook
+
+- **Описание:** Проверяет, что нельзя вернуть книгу, которую не забронировали.  
+**Входные данные:**  
+book("Title", "Author", "Publisher", 2023) - экземпляр книги  
+book_to_return = "Title1" - название книги которую пытаются вернуть  
+**Выходные данные:**  
+Выводит сообщение "Book is not reserved"
 
 ### LibraryCannotTakeReservedBook
 
-- **Описание:** Проверяет, что нельзя зарезервировать уже зарезервированную книгу.
+- **Описание:** Проверяет, что нельзя зарезервировать уже зарезервированную книгу.  
+**Входные данные:**  
+library - 
+book("Title", "Author", "Publisher", 2023) - экземпляр книги  
+reserveDate = time(nullptr) - 1 - дата бронирования  
+**Выходные данные:**  
+Выводит сообщение "Book already reserved"  
 
 ### RemoveFromLibrary
 
-- **Описание:** Проверяет, что книгу можно удалить из библиотеки.
+- **Описание:** Проверяет, что книгу можно удалить из библиотеки.  
+**Входные данные:**  
+book("Title", "Author", "Publisher", 2023) - экземпляр книги  
+book_to_remove = "Title" -  название книги для удаления  
+**Выходные данные:**  
+library.books_amount() = 0 - количество книг в библиотеке становится равно 0  
 
 ### ReservedBooksInLibrary
 
-- **Описание:** Проверяет, что можно получить список зарезервированных книг в библиотеке.
-
-## Дополнительные тесты для поиска книг
+- **Описание:** Проверяет, что можно получить список зарезервированных книг в библиотеке.  
+**Входные данные:**  
+book1("Title1", "Author1", "Publisher1", 2023) - экземпляр книги  
+book2("Title2", "Author2", "Publisher2", 2023) - экземпляр книги  
+date = time(nullptr) - дата бронирования
+reserve_title = "Title1" - название книги для бронирования
+**Выходные данные:**  
+Выводит сообщение в формате  
+"Title: Title1  
+Author: Author1  
+Publisher: Publisher1  
+Year: 2023"   
 
 ### SimilarBooksByOneWord
 
-- **Описание:** Проверяет поиск книг по одному слову в названии.
+- **Описание:** Проверяет поиск книг по одному слову в названии.  
+**Входные данные:**  
+book("The Catcher in the Rye", "J.D. Salinger","Publisher", 1984) - 1 книга  
+book("To Kill a Mockingbird", "Harper Lee","Publisher", 1984) - 2 книга  
+book("The Great Gatsby", "F. Scott Fitzgerald","Publisher", 1984) - 3 книга  
+book("1984", "George Orwell","Publisher", 1984) - 4 книга  
+search_title = "Mockingbird" - фраза для поиска  
+**Выходные данные:** 
+Выводит название найденной книги "To Kill a Mockingbird\n"  
 
 ### SimilarBooksByWords
 
-- **Описание:** Проверяет поиск книг по нескольким словам в названии.
+- **Описание:** Проверяет поиск книг по нескольким словам в названии.  
+**Входные данные:**  
+book("The Catcher in the Rye", "J.D. Salinger","Publisher", 1984) - 1 книга  
+book("To Kill a Mockingbird", "Harper Lee","Publisher", 1984) - 2 книга  
+book("The Great Gatsby", "F. Scott Fitzgerald","Publisher", 1984) - 3 книга  
+book("1984", "George Orwell","Publisher", 1984) - 4 книга  
+search_title = "Mockingbird Great rye" - фраза для поиска  
+**Выходные данные:**  
+Выводит названия найденных книг  
+"The Catcher in the Rye  
+To Kill a Mockingbird  
+The Great Gatsby"   
 
 ### SimilarBooksUpperCase
 
-- **Описание:** Проверяет поиск книг в независимости от регистра букв.
+- **Описание:** Проверяет поиск книг в независимости от регистра букв.  
+**Входные данные:**  
+book("The Catcher in the Rye", "J.D. Salinger","Publisher", 1984) - 1 книга  
+book("To Kill a Mockingbird", "Harper Lee","Publisher", 1984) - 2 книга  
+book("The Great Gatsby", "F. Scott Fitzgerald","Publisher", 1984) - 3 книга  
+book("1984", "George Orwell","Publisher", 1984) - 4 книга  
+search_title = "GaTsBy" - фраза для поиска  
+**Выходные данные:**  
+Выводит название найденной книги "The Great Gatsby"   
 
+### NoSimilarBooks
 
-
+- **Описание:** Проверяет поиск книг в независимости от регистра букв.  
+**Входные данные:**  
+book("The Catcher in the Rye", "J.D. Salinger","Publisher", 1984) - 1 книга  
+book("To Kill a Mockingbird", "Harper Lee","Publisher", 1984) - 2 книга  
+book("The Great Gatsby", "F. Scott Fitzgerald","Publisher", 1984) - 3 книга  
+book("1984", "George Orwell","Publisher", 1984) - 4 книга  
+search_title = "Harry Potter" - фраза для поиска  
+**Выходные данные:** 
+books.size() = 0 - количество найденых книг равно 0  
 
 
 

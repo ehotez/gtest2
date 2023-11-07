@@ -56,16 +56,27 @@ TEST(BookTest, Print) {
     EXPECT_EQ(output, "Title: Title1\nAuthor: Author1\nPublisher: Publisher1\nYear: 1978\n");
 }
 
-//В библиотеку можно добавить и найти книгу
-TEST(LibraryTest, LibraryCanAddAndFindBooks) {
+//В библиотеку можно добавить книгу
+TEST(LibraryTest, LibraryCanAddBooks) {
     Library library;
     Book book1("Title1", "Author1", "Publisher1", 2022);
     Book book2("Title2", "Author2", "Publisher2", 2023);
 
     library.add_book(&book1);
     library.add_book(&book2);
+    ASSERT_EQ(library.books_amount(), 2);
+}
 
-    ASSERT_EQ(library.find_books_by_author("Author2")[0]->get_author(), "Author2");
+//В библиотеке можно найти книгу по автору
+TEST(LibraryTest, LibraryCanFindBooksByAuthor) {
+    Library library;
+    Book book1("Title1", "Author1", "Publisher1", 2022);
+    Book book2("Title2", "Author2", "Publisher2", 2023);
+
+    library.add_book(&book1);
+    library.add_book(&book2);
+    std::string title = library.find_books_by_author("Author2")[0]->get_title();
+    ASSERT_EQ(title, "Title2");
 }
 
 //В библиотеке можно забронировать книгу
@@ -77,6 +88,19 @@ TEST(LibraryTest, LibraryCanReserveBooks) {
     library.reserve_book("Title", reserveDate);
     ASSERT_TRUE(book.is_reserved());
 
+}
+
+//В библиотеке нельзя зарезервировать книгу не из этой библиотеки (негативный)
+TEST(LibraryTest, LibraryCannotReserveUnknownBook) {
+    Library library;
+    Book book("Title", "Author", "Publisher", 2023);
+    time_t reserveDate = time(nullptr) - 1;
+    std::string book_to_reserve = "Title1";
+    library.add_book(&book);
+    testing::internal::CaptureStdout();
+    library.reserve_book(book_to_reserve, reserveDate);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "Unknown book\n");
 }
 
 //В библиотеке можно вернуть книгу
@@ -95,13 +119,24 @@ TEST(LibraryTest, LibraryCanReturnBooks) {
 TEST(LibraryTest, LibraryCannotReturnUnknownBook) {
     Library library;
     Book book("Title", "Author", "Publisher", 2023);
-    time_t reserveDate = time(nullptr) - 1;
+    std::string book_to_return = "Title1";
     library.add_book(&book);
     testing::internal::CaptureStdout();
-    library.reserve_book("Title1", reserveDate);
+    library.return_book(book_to_return);
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, "Unknown book\n");
+}
 
+//В библиотеке нельзя вернуть не забронированную книгу (негативный)
+TEST(LibraryTest, LibraryCannotReturnNotReservedBook) {
+    Library library;
+    Book book("Title", "Author", "Publisher", 2023);
+    std::string book_to_return = "Title";
+    library.add_book(&book);
+    testing::internal::CaptureStdout();
+    library.return_book(book_to_return);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "Book is not reserved\n");
 }
 
 //В библиотеке нельзя забронировать уже забронированную книгу (негативный)
@@ -123,8 +158,9 @@ TEST(LibraryTest, RemoveFromLibrary) {
     Library library;
     Book book("Title", "Author", "Publisher", 2023);
     library.add_book(&book);
-    library.remove_book_by_title("Title");
-    ASSERT_EQ(library.find_books_by_author("Author").size(), 0);
+    std::string book_to_remove = "Title";
+    library.remove_book_by_title(book_to_remove);
+    ASSERT_EQ(library.books_amount(), 0);
 }
 
 //В библиотеке можно посмотреть список забронированных книг
@@ -134,26 +170,16 @@ TEST(LibraryTest, ReservedBooksInLibrary) {
     Book book2("Title2", "Author2", "Publisher2", 2023);
     library.add_book(&book1);
     time_t date = time(nullptr);
-    library.reserve_book("Title1", date);
-    ASSERT_EQ(library.reserved_books().size(), 1);
-}
-
-//2 одиннаковые книги нельзя забронировать (негативный)
-TEST(LibraryTest, TwoSimiliarBooks) {
-    Library library;
-    Book book1("Title1", "Author1", "Publisher1", 2023);
-    Book book2("Title1", "Author1", "Publisher1", 2023);
-    library.add_book(&book1);
-    library.add_book(&book2);
-    time_t date = time(nullptr);
+    std::string reserve_title = "Title1";
+    library.reserve_book(reserve_title, date);
     testing::internal::CaptureStdout();
-    library.reserve_book("Title1", date);
-    library.reserve_book("Title1", date);
+    std::vector<Book*> books = library.reserved_books();
+    for(Book* book: books) {
+        book->print_book();
+    }
     std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(output, "Book already reserved\n");
-    ASSERT_EQ(library.reserved_books().size(), 1);
+    EXPECT_EQ(output, "Title: Title1\nAuthor: Author1\nPublisher: Publisher1\nYear: 2023\n");
 }
-
 
 //Поиск похожих книг по одному слову
 TEST(LibraryTest, SimilarBooksByOneWord) {
@@ -213,6 +239,21 @@ TEST(LibraryTest, SimilarBooksUpperCase) {
     }
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, "The Great Gatsby\n");
+}
+
+//Поиск похожих книг в независимости от регистра букв
+TEST(LibraryTest, NoSimilarBooks) {
+    Library library;
+
+    library.add_book(new Book("The Catcher in the Rye", "J.D. Salinger","Publisher", 1984));
+    library.add_book(new Book("To Kill a Mockingbird", "Harper Lee","Publisher", 1984));
+    library.add_book(new Book("The Great Gatsby", "F. Scott Fitzgerald","Publisher", 1984));
+    library.add_book(new Book("1984", "George Orwell","Publisher", 1984));
+
+    std::string search_title = "Harry Potter";
+    std::vector<Book*> books = library.similar_books(search_title);
+
+    EXPECT_EQ(books.size(), 0);
 }
 
 #endif // TESTS_H
