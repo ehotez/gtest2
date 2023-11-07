@@ -91,7 +91,7 @@ TEST(LibraryTest, LibraryCanReturnBooks) {
     ASSERT_FALSE(book.is_reserved());
 }
 
-//В библиотеке нельзя вернуть книгу не из этой библиотеки
+//В библиотеке нельзя вернуть книгу не из этой библиотеки (негативный)
 TEST(LibraryTest, LibraryCannotReturnUnknownBook) {
     Library library;
     Book book("Title", "Author", "Publisher", 2023);
@@ -104,7 +104,7 @@ TEST(LibraryTest, LibraryCannotReturnUnknownBook) {
 
 }
 
-//В библиотеке нельзя забронировать уже забронированную книгу
+//В библиотеке нельзя забронировать уже забронированную книгу (негативный)
 TEST(LibraryTest, LibraryCannotTakeReservedBook) {
     Library library;
     Book book("Title", "Author", "Publisher", 2023);
@@ -137,6 +137,23 @@ TEST(LibraryTest, ReservedBooksInLibrary) {
     library.reserve_book("Title1", date);
     ASSERT_EQ(library.reserved_books().size(), 1);
 }
+
+//2 одиннаковые книги нельзя забронировать (негативный)
+TEST(LibraryTest, TwoSimiliarBooks) {
+    Library library;
+    Book book1("Title1", "Author1", "Publisher1", 2023);
+    Book book2("Title1", "Author1", "Publisher1", 2023);
+    library.add_book(&book1);
+    library.add_book(&book2);
+    time_t date = time(nullptr);
+    testing::internal::CaptureStdout();
+    library.reserve_book("Title1", date);
+    library.reserve_book("Title1", date);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "Book already reserved\n");
+    ASSERT_EQ(library.reserved_books().size(), 1);
+}
+
 
 //Поиск похожих книг по одному слову
 TEST(LibraryTest, SimilarBooksByOneWord) {
