@@ -57,9 +57,11 @@
 ### BookCanBeReserved
 
 - **Описание:** Проверяет, что книгу можно успешно зарезервировать.  
-**Входные данные:** book("Title", "Author", "Publisher", 2023),  
-                    reserveDate = time(nullptr) (сегодняшняя дата)  
-**Выходные данные:** book.is_reserved() = True (книга забронирована)
+**Входные данные:**  
+book("Title", "Author", "Publisher", 2023) - экземпляр книги   
+reserveDate = time(nullptr) - сегодняшняя дата  
+**Выходные данные:**  
+book.is_reserved() = True - книга забронирована
 
 ### BookReturnedWithFine
 
